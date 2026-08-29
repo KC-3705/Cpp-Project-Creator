@@ -1,8 +1,8 @@
 ## C++ PROJECT CREATOR by KC_C4 / KC-3705
 
-Simple Termianl App For Linux to Create Your C++ + CMake Project.
+Simple Terminal App For Linux to Create Your C++ + CMake Project.
 Use how ever you want.
-On this moment (29.08.2026) current version of this App is v1.0 aka."Relase 1".
+On this moment (29.08.2026) current version of this App is v1.0 aka."Release 1".
 
 ## HOW TO COMPILE?
 	Simple...
@@ -16,7 +16,7 @@ On this moment (29.08.2026) current version of this App is v1.0 aka."Relase 1".
 	.build/			| Build Folder for CMake Project
 	res/			| Resource Folder (Music/Sprites/Fonts)
 	src/			| Source Folder (.cpp / .h / .hpp)
-	main.cpp			| Main Program File
+	main.cpp		| Main Program File
 	CMakeLists.txt	| CMake Link Lib File
 
 ## Options to chose:
