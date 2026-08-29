@@ -25,12 +25,16 @@ On this moment (29.08.2026) current version of this App is v0.1 aka."Test of Con
 		1.2.USE CURRENT DIR?: <bool>
 			1.2.1.TYPE YOUR DIR: <string>
 	2. Create...
-		2.1. Default .cpp File
+		2.1. Default/Main .cpp File
 		2.2. Default .h File
 		2.3. Default .hpp File
 		2.4. Default CMakeLists.txt File
+		2.10. Created NewProject Folder
+		2.20. Created Source Folder 
+		2.30. Created Resources Folder
+		2.40. Created CMake's Build Folder
 	3. Compile Project
-	4. Exit
+	Exit [CTRL+C]
 
 ## Inside...:
 	main.cpp 		| just main() func.
