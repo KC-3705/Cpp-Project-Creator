@@ -31,9 +31,9 @@ On this moment (29.08.2026) current version of this App is v1.0 aka."Relase 1".
 		2.4. Default CMakeLists.txt File
 		2.5. Default C++ Class
 		2.10. Created NewProject Folder
-		2.20. Created Source Folder 
-		2.30. Created Resources Folder
-		2.40. Created CMake's Build Folder
+		2.11. Created Source Folder 
+		2.12. Created Resources Folder
+		2.13. Created CMake's Build Folder
 	3. Compile Project
 	Exit [CTRL+C]
 
