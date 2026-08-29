@@ -2,7 +2,7 @@
 
 Simple Termianl App For Linux to Create Your C++ + CMake Project.
 Use how ever you want.
-On this moment (29.08.2026) current version of this App is v0.1 aka."Test of Concept".
+On this moment (29.08.2026) current version of this App is v1.0 aka."Relase 1".
 
 ## HOW TO COMPILE?
 	Simple...
@@ -12,7 +12,7 @@ On this moment (29.08.2026) current version of this App is v0.1 aka."Test of Con
 	4.Copy "ProCreator" in your project contain folder
 	5.Launch "ProCreator"
 
-## What Created Project Looks Like:
+## What New Created Project Look Like:
 	.build/			| Build Folder for CMake Project
 	res/			| Resource Folder (Music/Sprites/Fonts)
 	src/			| Source Folder (.cpp / .h / .hpp)
@@ -29,6 +29,7 @@ On this moment (29.08.2026) current version of this App is v0.1 aka."Test of Con
 		2.2. Default .h File
 		2.3. Default .hpp File
 		2.4. Default CMakeLists.txt File
+		2.5. Default C++ Class
 		2.10. Created NewProject Folder
 		2.20. Created Source Folder 
 		2.30. Created Resources Folder
@@ -37,5 +38,6 @@ On this moment (29.08.2026) current version of this App is v0.1 aka."Test of Con
 	Exit [CTRL+C]
 
 ## Inside...:
-	main.cpp 		| just main() func.
-	CMakeLists.txt 	| Default CMake/C++ Version (CMake 4.3 or 3.21 , C++11 to C++20)
+	main.cpp 			| just main() func.
+	CMakeLists.txt 		| Default CMake/C++ Version (CMake 4.3 or 3.21 , C++11 to C++20)
+	Default .cpp Class	| just #include "yourClass.hpp"

@@ -8,28 +8,35 @@
 // DO NOT ADD SPACES IN TYPE DIR
 
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <istream>
 #include <string>
+#include <sys/types.h>
 
 using namespace std;
+
+string userName{"macmini"}; //repalce with our own :)
 
 string F_SetDir();
 int F_Menu();
 string F_GetCurDir();
-int F_CreateProj(string proName,string proDir);
+int F_CreateProj(string proName);
 int F_CreateAsset(int a);
+string F_SetFolder(u_int8_t a,string _proName);
 
 int main()
 {
+	if(userName == ""){cout << "TYPE YOUR USR NAME: ";	cin >> userName;}
+
 	return F_Menu();
 }
 
 int F_Menu()
 {
 	int returnValue{-1};
-	cout << "[Project Creator v0.1]" << endl;
+	cout << "[Project Creator v1.0]" << endl;
 
 	againMenu:;
 	u_int16_t select{0};
@@ -47,41 +54,15 @@ int F_Menu()
 		}
 		case 1:
 		{
-			char curDir;bool setuped{false};
-			string proName{""},proDir{""};
+			bool setuped{false};	string proName{""};
+
 			cout << "[Create New Project]" << endl;
 			cout << "TYPE NAME: "; cin >> proName;
-			if(proName.length() >= 1)
-			{
-				backToSelectCurDir:;
-				cout << "Use Current Dir (Y/N)?: "; cin >> curDir;
-				if (curDir == 'Y' || 'y' || '1' || ' ')
-				{
-					cout << "Using Current Dir... " << (proDir = F_GetCurDir()) << "\n"; setuped = true;
-				}
-				else if (curDir == 'N' || 'n' || '0')
-				{
-					cout << "TYPE DIR: "; cin >> proDir; setuped = true;
-				}
-				else
-				{
-					goto backToSelectCurDir;
-				}
-			}
-			else
-			{
-				cout << "ERROR: NO PROJECT NAME or PROJECT NAME LENGTH TO SHORT!!!" << endl;
-				goto againMenu;
-			}
 
-			if (setuped)
-			{
-				cout << "[Creating]\n";
-				cout << "[PROJECT NAME: " << proName << " ]\n";
-				cout << "[DIR : " << proDir << " ]\n";
+			if(proName.length() >= 1){if(proName != ""){setuped = true;}	}
+			else{	cout << "ERROR: NO PROJECT NAME or PROJECT NAME LENGTH TO SHORT!!!" << endl;	goto againMenu;	}
 
-				returnValue = F_CreateProj(proName,proDir);
-			}
+			if (setuped){returnValue = F_CreateProj(proName);}
 			else
 			{
 				goto againMenu;
@@ -101,10 +82,10 @@ int F_Menu()
 
 			cout << "5.Default C++ Class Files" << endl;
 
-			cout << "10.New Project Folder" << endl;
-			cout << "20.Source Folder" << endl;
-			cout << "30.Resources Folder" << endl;
-			cout << "40.CMake's Build Folder" << endl;
+			cout << "10.New Folder" << endl;
+			cout << "11.Source Folder" << endl;				// MACRO
+			cout << "12.Resources Folder" << endl;			// MACRO
+			cout << "13.CMake's Build Folder" << endl;		// MACRO
 
 			cout << ": ";cin >> a;
 			if(F_CreateAsset(a) >= 0) {goto backToCreateAsset;}; returnValue = 1;
@@ -112,10 +93,25 @@ int F_Menu()
 		}
 		case 3:
 		{
-			system("cd NewProject/.build");
-			system("cmake NewProject -B NewProject/.build");
-			system("make -C NewProject/.build");
-			returnValue = 1;
+			backToSelectYesNo:;
+			char yesno{};
+
+			cout << "WARNING: THIS OPTION WORKS ONLY WHEN YOU INSIDE .build IN YOUR PORJECT!!!\n";
+			cout << "Continue? (Y/N):" ; cin >> yesno;
+
+			if (yesno == 'Y'|| yesno == 'y' || yesno == '1')
+			{
+				system("cmake ..");
+				system("make -C .build");
+				returnValue = 1;
+			}
+			else if (yesno == 'N' || yesno == 'n' || yesno == '0')
+			{
+				returnValue = 0; goto againMenu;
+			}
+			else {cout << "NO MATCH FOR " << yesno << endl;;goto backToSelectYesNo;}
+
+
 			break;
 		}
 	}
@@ -141,12 +137,15 @@ string F_GetCurDir()
 	return curDir;
 }
 
-int F_CreateProj(string proName,string proDir)
+int F_CreateProj(string _proName)
 {
-	system("mkdir NewProject");
-	proDir += "/NewProject/";
-	string cppFile{proDir+"main.cpp"};
-	string cmakeFile{proDir+"CMakeLists.txt"};
+	string _proDir =F_SetFolder(1,_proName);
+	string cppFile{_proDir+"/"+"main.cpp"};
+	string cmakeFile{_proDir+"/"+"CMakeLists.txt"};
+
+	cout << "[Creating]\n";
+	cout << "[PROJECT NAME: " << _proName << " ]\n";
+	cout << "[DIR : " << _proDir << " ]\n";
 
 	ofstream file1 (cppFile);
 
@@ -158,14 +157,14 @@ int F_CreateProj(string proName,string proDir)
 	file2 << "cmake_minimum_required(VERSION 4.3)\n";
 	file2 << "set(CMAKE_CXX_STANDARD 20) # GCC 16.1\n";
 	file2 << endl;
-	file2 << "project(" << proName << ")\n";
+	file2 << "project(" << _proName << ")\n";
 	file2 << "add_executable(${PROJECT_NAME} main.cpp)\n";
 	file2 << endl;
 	file2.close();
 
-	system("mkdir NewProject/.build");
-	system("mkdir NewProject/res");
-	system("mkdir NewProject/src");
+	filesystem::create_directories(_proDir+"/.build");
+	filesystem::create_directories(_proDir+"/src");
+	filesystem::create_directories(_proDir+"/res");
 
 	return 1;
 }
@@ -208,6 +207,7 @@ int F_CreateAsset(int a)
 				file << "";
 				file.close();
 			}
+			cout << "IN DIR: " << proDir << endl;
 			returnValue = 1;
 			break;
 		}
@@ -222,6 +222,7 @@ int F_CreateAsset(int a)
 			name += ".h";
 			cout << "CREATING " << name << endl;;
 			hFile={proDir+"/"+name};
+			cout << "IN DIR: " << proDir << endl;
 
 			ofstream file (hFile);
 
@@ -241,6 +242,7 @@ int F_CreateAsset(int a)
 			name += ".hpp";
 			cout << "CREATING " << name << endl;;
 			hppFile={proDir+"/"+name};
+			cout << "IN DIR: " << proDir << endl;
 
 			ofstream file (hppFile);
 
@@ -257,6 +259,7 @@ int F_CreateAsset(int a)
 			proDir = F_SetDir();
 			cout << "CREATING " << name << endl;;
 			cmakeFile={proDir+"/"+name};
+			cout << "IN DIR: " << proDir << endl;
 
 			ofstream file (cmakeFile);
 
@@ -279,7 +282,7 @@ int F_CreateAsset(int a)
 			cout << ":"; cin >> name;
 			proDir = F_SetDir();
 			cout << "CREATING CLASS" << name << endl;;
-
+			cout << "IN DIR: " << proDir << endl;
 			cppFile={proDir+"/"+name+".cpp"};
 			hppFile={proDir+"/"+name+".hpp"};
 
@@ -296,32 +299,42 @@ int F_CreateAsset(int a)
 		}
 		case 10:
 		{
-			cout << "Created NewProject Folder\n";
-			system("mkdir NewProject");
+			string folderName{""};
+			proDir = F_SetDir();
+
+			cout << "Create Folder: "; cin >> folderName;
+
+			string folderDirName{proDir+"/"+folderName};
+
+			cout << "Created New Folder\n";
+			filesystem::create_directories(folderDirName);
+
 			returnValue = 10;
 			break;
 		}
-		case 20:
+		// MACRO
+		case 11:
 		{
 			cout << "Created Source Folder\n";
 			system("mkdir src");
-			returnValue = 20;
+			returnValue = 11;
 			break;
 		}
-		case 30:
+		case 12:
 		{
 			cout << "Created Resources Folder\n";
 			system("mkdir res");
-			returnValue = 30;
+			returnValue = 12;
 			break;
 		}
-		case 40:
+		case 13:
 		{
 			cout << "Created CMake's Build Folder\n";
 			system("mkdir .build");
-			returnValue = 40;
+			returnValue = 13;
 			break;
 		}
+		// MACRO END
 		default: cout << "NO MATCH FOR " << a << endl; returnValue = 0;
 	}
 
@@ -330,17 +343,47 @@ int F_CreateAsset(int a)
 
 string F_SetDir()
 {
-	char curDir;
-	string proDir;
-	cout << "Use Current Dir (Y/N)?: "; cin >> curDir;
-	if (curDir == 'Y' || 'y' || '1' || ' ')
+	backToSelectCurDir:;
+	char yesno{};
+	string proDir{""};
+	cout << "Use Current Dir (Y/N)?: "; cin >> yesno;
+	if (yesno == 'Y'|| yesno == 'y' || yesno == '1')
 	{
-		cout << "Using Current Dir... " << (proDir = F_GetCurDir()) << "\n";
+		proDir = F_GetCurDir();
+		cout << "Using Current Dir... " << proDir << "\n";
 	}
-	else if (curDir == 'N' || 'n' || '0')
+	else if (yesno == 'N' || yesno == 'n' || yesno == '0')
 	{
+		string abcd{"/home/"+userName+"/"};
 		cout << "TYPE DIR: "; cin >> proDir;
+		if(proDir[0] == '~' && proDir[1] == '/') // FIX: Before fix no "~" or "~/" (/home/user/) macro
+		{
+			int aaa=2;
+			while(aaa < proDir.length())
+			{
+				abcd += proDir[aaa];
+				cout << aaa << ": " << abcd << endl;
+				aaa++;
+			}
+			if(aaa >= proDir.length()) {proDir = abcd;}
+		}
 	}
+	else {cout << "NO MATCH FOR " << yesno <<endl;goto backToSelectCurDir;}
 
 	return proDir;
+}
+
+string F_SetFolder(u_int8_t a,string _proName) // Pass 0 for Just Folder | Pass 1 For New project
+{
+	string folderName{""},proDir{""};
+	proDir = F_SetDir();
+
+	if(a == 0){cout << "Create Folder: "; cin >> folderName;}
+	if(a == 1){cout << "Creating new Project: "<< _proName << endl;}
+
+	string folderDirName{proDir+"/"+_proName};
+
+	cout << "folderDirName = "<< folderDirName << endl;
+	filesystem::create_directories(folderDirName);
+	return folderDirName;
 }
